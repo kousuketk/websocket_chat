@@ -1,0 +1,5 @@
+# Application
+.env
+
+# Docker
+docker/data
