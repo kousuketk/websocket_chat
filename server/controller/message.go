@@ -11,6 +11,10 @@ type MessageController struct{}
 
 var messageService service.MessageService
 
+func (m *MessageController) Health(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("ok."))
+}
+
 func (m *MessageController) Subscribe(w http.ResponseWriter, r *http.Request) {
 	// upgrader := websocket.Upgrader{
 	// 	ReadBufferSize:  1024,

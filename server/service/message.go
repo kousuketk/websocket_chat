@@ -12,15 +12,15 @@ var messageRepo repository.MessageRepository
 func (MessageService) Send(msg model.Message) error {
 	err := messageRepo.SendMessage(msg)
 	if err != nil {
-		return error
+		return nil
 	}
 	return nil
 }
 
-func (MessageService) Get(channelID string) chan interface{} {
+func (MessageService) Get(channelID string) error {
 	err := messageRepo.GetMessage(channelID)
 	if err != nil {
-		return error
+		return nil
 	}
 	return nil
 }
