@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/kousuketk/websocket_chat/server/model"
 	"github.com/kousuketk/websocket_chat/server/service"
 )
@@ -27,24 +26,24 @@ func (m *MessageHandler) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *MessageHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
-	upgrader := websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-	conn, err := upgrader.Upgrade(w, r, nil)
-	defer conn.Close()
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	// upgrader := websocket.Upgrader{
+	// 	ReadBufferSize:  1024,
+	// 	WriteBufferSize: 1024,
+	// }
+	// conn, err := upgrader.Upgrade(w, r, nil)
+	// defer conn.Close()
+	// if err != nil {
+	// 	log.Println(err)
+	// 	return
+	// }
 
-	_, b, err2 := conn.ReadMessage()
-	if err2 != nil {
-		log.Println("Websocket error: ", err2)
-	}
-	channelID := string(b)
+	// _, b, err2 := conn.ReadMessage()
+	// if err2 != nil {
+	// 	log.Println("Websocket error: ", err2)
+	// }
+	// channelID := string(b)
 
-	err3 := m.service.Get(channelID)
+	err3 := m.service.Get("veritas")
 	if err3 != nil {
 		log.Println(err3)
 	}
