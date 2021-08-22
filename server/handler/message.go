@@ -66,22 +66,19 @@ func (m *MessageHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *MessageHandler) Publish(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	b, err := ioutil.ReadAll(r.Body)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		panic(err)
 	}
 
 	var msg model.Message
-	err = json.Unmarshal(b, &msg)
-	if err != nil {
+	err2 := json.Unmarshal(body, &msg)
+	if err2 != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	err2 := m.service.Send(msg)
-	if err2 != nil {
-		log.Println(err2)
+	err3 := m.service.Send(msg)
+	if err3 != nil {
+		log.Println(err3)
 	}
-	return
 }

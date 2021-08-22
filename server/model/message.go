@@ -1,24 +1,24 @@
 package model
 
 type Message struct {
-	channelID string `json:"channelID"`
-	userID    string `json:"userID"`
-	content   string `json:"content"`
-	sentAt    string `json:"sentAt"`
+	ChannelID string `json:"channelID"`
+	UserID    string `json:"userID"`
+	Content   string `json:"content"`
+	SentAt    string `json:"sentAt"`
 }
 
 func (m Message) GetChannelID() string {
-	return m.channelID
+	return m.ChannelID
 }
 
 func (m Message) GetUserID() string {
-	return m.userID
+	return m.UserID
 }
 
 func (m Message) GetContent() string {
-	return m.content
+	return m.Content
 }
 
 func (m Message) GetSentAt() string {
-	return m.sentAt
+	return m.SentAt
 }
