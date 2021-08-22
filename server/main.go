@@ -7,16 +7,16 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
-	"github.com/kousuketk/websocket_chat/server/controller"
+	"github.com/kousuketk/websocket_chat/server/handler"
 )
 
 func setRouter() http.Handler {
 	r := chi.NewRouter()
+	h := handler.NewMessageHandler()
 	r.Route("/api/v1", func(r chi.Router) {
-		m := controller.MessageController{}
-		r.Get("/health", m.Health)
-		r.Get("/subscribe", m.Subscribe)
-		r.Post("/publish", m.Publish)
+		r.Get("/health", h.Health)
+		r.Get("/subscribe", h.Subscribe)
+		r.Post("/publish", h.Publish)
 	})
 	return r
 }

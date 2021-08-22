@@ -4,14 +4,15 @@ services:
     container_name: "websocket_chat"
     build: 
       context: .
+      dockerfile: Dockerfile
     tty: true
     depends_on:
       - redis
-    expose:
-      - 8080
+    ports:
+      - 9090:9090
     volumes:
-      - ./docker/data/server:/app
-  
+      - .:/app
+
   redis:
     container_name: "redis"
     image: "redis:latest"
@@ -19,4 +20,3 @@ services:
       - "./docker/data/redis:/data"
     ports:
       - 6379:6379
-    

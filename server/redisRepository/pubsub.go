@@ -14,7 +14,7 @@ func NewRedisMessageRepository() RedisMessageRepository {
 	return RedisMessageRepository{}
 }
 
-func (r *RedisMessageRepository) GetMessage(channelID string) error {
+func (repo RedisMessageRepository) GetMessage(channelID string) error { // pointer recieverにしたらエラーでた
 	conn, err := redis.Dial("tcp", os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"))
 	if err != nil {
 		panic(err)
@@ -30,12 +30,12 @@ func (r *RedisMessageRepository) GetMessage(channelID string) error {
 		case redis.Subscription:
 			log.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			return error
+			return nil
 		}
 	}
 }
 
-func (r *RedisMessageRepository) SendMessage(msg model.Message) error {
+func (repo RedisMessageRepository) SendMessage(msg model.Message) error {
 	conn, err := redis.Dial("tcp", os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"))
 	if err != nil {
 		panic(err)

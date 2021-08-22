@@ -2,23 +2,30 @@ package service
 
 import (
 	"github.com/kousuketk/websocket_chat/server/model"
+	"github.com/kousuketk/websocket_chat/server/registry"
 	"github.com/kousuketk/websocket_chat/server/repository"
 )
 
-type MessageService struct{}
+type MessageService struct {
+	repo repository.MessageRepository
+}
 
-var messageRepo repository.MessageRepository
+func NewMessageService() MessageService {
+	return MessageService{
+		repo: registry.NewRedisMessageRepository(),
+	}
+}
 
-func (MessageService) Send(msg model.Message) error {
-	err := messageRepo.SendMessage(msg)
+func (m *MessageService) Send(msg model.Message) error {
+	err := m.repo.SendMessage(msg)
 	if err != nil {
 		return nil
 	}
 	return nil
 }
 
-func (MessageService) Get(channelID string) error {
-	err := messageRepo.GetMessage(channelID)
+func (m *MessageService) Get(channelID string) error {
+	err := m.repo.GetMessage(channelID)
 	if err != nil {
 		return nil
 	}

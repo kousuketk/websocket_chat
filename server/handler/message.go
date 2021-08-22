@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"encoding/json"
@@ -9,22 +9,18 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/kousuketk/websocket_chat/server/model"
-	"github.com/kousuketk/websocket_chat/server/registry"
-	"github.com/kousuketk/websocket_chat/server/repository"
 	"github.com/kousuketk/websocket_chat/server/service"
 )
 
 type MessageHandler struct {
-	repo repository.MessageRepository
+	service service.MessageService
 }
 
 func NewMessageHandler() MessageHandler {
 	return MessageHandler{
-		repo: registry.NewRedisMessageRepository(),
+		service: service.NewMessageService(),
 	}
 }
-
-var messageService service.MessageService
 
 func (m *MessageHandler) Health(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok."))
@@ -42,24 +38,29 @@ func (m *MessageHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mt, b, err := conn.ReadMessage()
-	if err != nil {
-		log.Println("Websocket error: ", err)
+	_, b, err2 := conn.ReadMessage()
+	if err2 != nil {
+		log.Println("Websocket error: ", err2)
 	}
 	channelID := string(b)
 
-	for v := range messageService.Get(channelID) {
-		switch v.(type) {
-		case model.Message:
-			res := v.(model.Message)
-			j, err := json.Marshal(res)
-			if err != nil {
-				log.Println("Websocket error: ", err)
-			} else {
-				conn.WriteMessage(mt, j)
-			}
-		}
+	err3 := m.service.Get(channelID)
+	if err3 != nil {
+		log.Println(err3)
 	}
+
+	// for v := range m.service.Get(channelID) {
+	// 	switch v.(type) {
+	// 	case model.Message:
+	// 		res := v.(model.Message)
+	// 		j, err := json.Marshal(res)
+	// 		if err != nil {
+	// 			log.Println("Websocket error: ", err)
+	// 		} else {
+	// 			conn.WriteMessage(mt, j)
+	// 		}
+	// 	}
+	// }
 
 	w.Write([]byte(fmt.Sprintln("ok. sub")))
 }
@@ -78,7 +79,7 @@ func (m *MessageHandler) Publish(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	err2 := messageService.Send(msg)
+	err2 := m.service.Send(msg)
 	if err2 != nil {
 		log.Println(err2)
 	}

@@ -1,2 +1,7 @@
 FROM golang:latest
-RUN mkdir /work
+WORKDIR /app
+
+COPY app/go.mod .
+COPY app/go.sum .
+
+RUN go mod download
