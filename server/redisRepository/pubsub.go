@@ -8,9 +8,13 @@ import (
 	"github.com/kousuketk/websocket_chat/server/model"
 )
 
-type RedisRepository struct{}
+type RedisMessageRepository struct{}
 
-func (r *RedisRepository) GetMessage(channelID string) error {
+func NewRedisMessageRepository() RedisMessageRepository {
+	return RedisMessageRepository{}
+}
+
+func (r *RedisMessageRepository) GetMessage(channelID string) error {
 	conn, err := redis.Dial("tcp", os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"))
 	if err != nil {
 		panic(err)
@@ -26,12 +30,12 @@ func (r *RedisRepository) GetMessage(channelID string) error {
 		case redis.Subscription:
 			log.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
-			return
+			return error
 		}
 	}
 }
 
-func (r *RedisRepository) SendMessage(msg model.Message) error {
+func (r *RedisMessageRepository) SendMessage(msg model.Message) error {
 	conn, err := redis.Dial("tcp", os.Getenv("REDIS_HOST")+":"+os.Getenv("REDIS_PORT"))
 	if err != nil {
 		panic(err)
