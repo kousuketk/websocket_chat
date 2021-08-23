@@ -2,11 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/kousuketk/websocket_chat/server/model"
 	"github.com/kousuketk/websocket_chat/server/service"
 )
@@ -26,42 +26,32 @@ func (m *MessageHandler) Health(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *MessageHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
-	// upgrader := websocket.Upgrader{
-	// 	ReadBufferSize:  1024,
-	// 	WriteBufferSize: 1024,
-	// }
-	// conn, err := upgrader.Upgrade(w, r, nil)
-	// defer conn.Close()
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return
-	// }
-
-	// _, b, err2 := conn.ReadMessage()
-	// if err2 != nil {
-	// 	log.Println("Websocket error: ", err2)
-	// }
-	// channelID := string(b)
-
-	err3 := m.service.Get("veritas")
-	if err3 != nil {
-		log.Println(err3)
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
 	}
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("websocket error: ", err)
+		return
+	}
+	defer conn.Close()
 
-	// for v := range m.service.Get(channelID) {
-	// 	switch v.(type) {
-	// 	case model.Message:
-	// 		res := v.(model.Message)
-	// 		j, err := json.Marshal(res)
-	// 		if err != nil {
-	// 			log.Println("Websocket error: ", err)
-	// 		} else {
-	// 			conn.WriteMessage(mt, j)
-	// 		}
-	// 	}
-	// }
+	mt, wsbody, err2 := conn.ReadMessage()
+	if err2 != nil {
+		log.Println("Websocket error: ", err2)
+	}
+	channelID := string(wsbody)
 
-	w.Write([]byte(fmt.Sprintln("ok. sub")))
+	for v := range m.service.Get(channelID) {
+		res := v.(model.Message)
+		j, err := json.Marshal(res)
+		if err != nil {
+			log.Println("Websocket error: ", err)
+		} else {
+			conn.WriteMessage(mt, j)
+		}
+	}
 }
 
 func (m *MessageHandler) Publish(w http.ResponseWriter, r *http.Request) {

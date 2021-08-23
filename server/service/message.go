@@ -24,10 +24,23 @@ func (m *MessageService) Send(msg model.Message) error {
 	return nil
 }
 
-func (m *MessageService) Get(channelID string) error {
-	err := m.repo.GetMessage(channelID)
-	if err != nil {
-		return nil
-	}
-	return nil
+func (m *MessageService) Get(channelID string) chan interface{} {
+	ch := m.repo.GetMessage(channelID) // redisRepoからのchanelを受け取ってそれをただhandlerに返すだけでもいい感じしてきた
+	return ch
+	// // channelを返す
+	// ch := make(chan interface{})
+
+	// go func() {
+	// 	for v := range m.repo.GetMessage(channelID) {
+	// 		switch v.(type) {
+	// 		case model.Message:
+	// 			log.Println("catched in service")
+	// 			ch <- ch
+	// 		case error:
+	// 			log.Println("servecei error")
+	// 		}
+	// 	}
+	// 	// close(ch)
+	// }()
+	// return ch
 }
