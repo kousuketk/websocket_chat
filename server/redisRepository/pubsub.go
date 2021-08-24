@@ -54,14 +54,14 @@ func (repo RedisMessageRepository) SendMessage(msg model.Message) error {
 	}
 	defer conn.Close()
 
-	j, err3 := json.Marshal(msg)
-	if err3 != nil {
-		panic(err3)
+	j, err := json.Marshal(msg)
+	if err != nil {
+		panic(err)
 	}
 
-	_, err2 := conn.Do("PUBLISH", msg.GetChannelID(), string(j))
-	if err2 != nil {
-		panic(err2)
+	_, err = conn.Do("PUBLISH", msg.GetChannelID(), string(j))
+	if err != nil {
+		panic(err)
 	}
 
 	return nil

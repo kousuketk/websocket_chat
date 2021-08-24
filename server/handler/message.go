@@ -37,9 +37,9 @@ func (m *MessageHandler) Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	mt, wsbody, err2 := conn.ReadMessage()
-	if err2 != nil {
-		log.Println("Websocket error: ", err2)
+	mt, wsbody, err := conn.ReadMessage()
+	if err != nil {
+		log.Println("Websocket error: ", err)
 	}
 	channelID := string(wsbody)
 
@@ -61,13 +61,13 @@ func (m *MessageHandler) Publish(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var msg model.Message
-	err2 := json.Unmarshal(body, &msg)
-	if err2 != nil {
+	err = json.Unmarshal(body, &msg)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	err3 := m.service.Send(msg)
-	if err3 != nil {
-		log.Println(err3)
+	err = m.service.Send(msg)
+	if err != nil {
+		log.Println(err)
 	}
 }
